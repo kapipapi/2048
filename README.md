@@ -1,4 +1,5 @@
 # 2048
 My attempt to make 2048 game.
 
-Let's start!
+## P5.js
+I'm currently using p5.js library :)
