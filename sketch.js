@@ -11,16 +11,56 @@ function setup() {
     createCanvas(400, 400);
     drawGrid();
     getNewDigit();
-    getNewDigit();
     drawGrid();
+}
+
+function slideRight() {
+    for (var i = 0; i < 4; i++) {
+        //get new row after merging similar digits
+        //recive only digits without zeros
+        grid[i] = mergeDigitsRight(grid[i]);
+        //make array with zeros with length 4-(num of non-zero digit)
+        var newRow = [];
+        for (var z = 0; z < 4 - grid[i].length; z++) {
+            newRow.push(0);
+        }
+        grid[i] = newRow.concat(grid[i]);
+    }
+}
+
+function mergeDigitsRight(row) {
+    var d = row.filter(x => x > 0);
+    for (var i = d.length - 1; i >= 1; i--) {
+        if (d[i] === d[i - 1]) {
+            d[i] = d[i] + d[i - 1];
+            d[i - 1] = 0;
+            d = d.filter(x => x > 0);
+        }
+    }
+    return d;
 }
 
 function slideLeft() {
     for (var i = 0; i < 4; i++) {
-        //get only digits from row
-        var d = grid[i].filter(x => x > 0);
-
+        grid[i] = mergeDigitsLeft(grid[i]);
+        var newRow = [];
+        for (var z = 0; z < 4 - grid[i].length; z++) {
+            newRow.push(0);
+        }
+        grid[i] = grid[i].concat(newRow);
     }
+}
+
+function mergeDigitsLeft(row) {
+    var d = row.filter(x => x > 0);
+    for (var i = 0; i < d.length - 1; i++) {
+        if (d[i] === d[i + 1]) {
+            d[i] = d[i] + d[i + 1];
+            d[i + 1] = 0;
+            d = d.filter(x => x > 0);
+        }
+    }
+    return d;
 }
 
 function getNewDigit() {
@@ -60,7 +100,14 @@ function drawGrid() {
 }
 
 function keyPressed() {
-    if (key == " ") {
+    if (key == "ArrowRight") {
+        slideRight();
+        getNewDigit();
+        drawGrid();
+    }
+    if (key == "ArrowLeft") {
         slideLeft();
+        getNewDigit();
+        drawGrid();
     }
 }
