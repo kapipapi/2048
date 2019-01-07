@@ -63,8 +63,63 @@ function mergeDigitsLeft(row) {
     return d;
 }
 
+function slideUp() {
+    for (var j = 0; j < 4; j++) {
+        // convert col to single array
+        var Ncol = [];
+        for (var i = 0; i < 4; i++) {
+            Ncol.push(grid[i][j]);
+        }
+
+        // same algoritm as sliding left
+        Ncol = mergeDigitsLeft(Ncol);
+
+        // adding zeros to empty cells
+        var newRow = [];
+        for (var z = 0; z < 4 - Ncol.length; z++) {
+            newRow.push(0);
+        }
+        Ncol = Ncol.concat(newRow);
+
+        // returning value to grid
+        for (var i = 0; i < 4; i++) {
+            grid[i][j] = Ncol[i];
+        }
+    }
+}
+
+function slideDown() {
+    for (var j = 0; j < 4; j++) {
+        var Ncol = [];
+        for (var i = 0; i < 4; i++) {
+            Ncol.push(grid[i][j]);
+        }
+        Ncol = mergeDigitsRight(Ncol);
+
+        var newRow = [];
+        for (var z = 0; z < 4 - Ncol.length; z++) {
+            newRow.push(0);
+        }
+        Ncol = newRow.concat(Ncol);
+        for (var i = 0; i < 4; i++) {
+            grid[i][j] = Ncol[i];
+        }
+    }
+}
+
 function getNewDigit() {
-    //check free cells in grid
+    // push 2 or 4 to random free cell
+    for (var n = 0; n < 2; n++) {
+        //check free cells in grid
+        var empty = getEmptyCells();
+        var r = random(1);
+        var c = random(empty);
+        grid[c.x][c.y] = r <= 0.5 ? 2 : 4;
+        empty.slice(c, 1);
+    }
+}
+
+function getEmptyCells() {
     var empty = [];
     for (var i = 0; i < 4; i++) {
         for (var j = 0; j < 4; j++) {
@@ -74,23 +129,22 @@ function getNewDigit() {
             })
         }
     }
-    // push 2 or 4 to random free cell
-    for (var n = 0; n < 2; n++) {
-        var r = random(1);
-        var c = random(empty);
-        grid[c.x][c.y] = r <= 0.5 ? 2 : 4;
-        empty.pop(c);
-    }
+    return empty;
 }
 
 function drawGrid() {
     background(255);
     for (var i = 0; i < 4; i++) {
         for (var j = 0; j < 4; j++) {
-            noFill();
+            fill(0);
             stroke(0);
             strokeWeight(2);
             rect(i * w, j * w, w, w);
+        }
+    }
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4; j++) {
+            fill(255);
             strokeWeight(1);
             textSize(40);
             textAlign(CENTER, CENTER);
@@ -107,6 +161,16 @@ function keyPressed() {
     }
     if (key == "ArrowLeft") {
         slideLeft();
+        getNewDigit();
+        drawGrid();
+    }
+    if (key == "ArrowUp") {
+        slideUp();
+        getNewDigit();
+        drawGrid();
+    }
+    if (key == "ArrowDown") {
+        slideDown();
         getNewDigit();
         drawGrid();
     }
