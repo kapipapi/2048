@@ -5,13 +5,24 @@ var grid = [
     [0, 0, 0, 0]
 ];
 
+var cells = [];
+
 var w = 100;
 
 function setup() {
     createCanvas(400, 400);
+
+    // initialize cells(block for animation)
+    for (var y = 0; y < 4; y++) {
+        for (var x = 0; x < 4; x++) {
+            cells.push(new Cell(x, y, grid[y][x]));
+        }
+    }
+
     drawGrid();
     getNewDigit();
     drawGrid();
+
 }
 
 function slideRight() {
@@ -134,22 +145,9 @@ function getEmptyCells() {
 
 function drawGrid() {
     background(255);
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
-            fill(0);
-            stroke(0);
-            strokeWeight(2);
-            rect(i * w, j * w, w, w);
-        }
-    }
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
-            fill(255);
-            strokeWeight(1);
-            textSize(40);
-            textAlign(CENTER, CENTER);
-            text(grid[i][j], j * w + w / 2, i * w + w / 2);
-        }
+    for (var c of cells) {
+        c.displayBlock();
+        c.displayText();
     }
 }
 
